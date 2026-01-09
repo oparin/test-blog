@@ -1,0 +1,77 @@
+name: test-blog
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/php/Dockerfile
+    image: tb-app
+    container_name: tb_app
+    restart: unless-stopped
+    tty: true
+    working_dir: /var/www/app
+    volumes:
+      - ./public:/var/www/html
+      - ./app:/var/www/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  webserver:
+    image: nginx:alpine
+    container_name: tb_webserver
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - .:/var/www/app
+      - ./deploy/nginx:/etc/nginx/conf.d/
+    depends_on:
+      - app
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    container_name: tb_mysql
+    restart: unless-stopped
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '${DOCKER_DB_PORT:-3366}:3306'
+    volumes:
+      - ./deploy/mysql/db_data:/var/lib/mysql
+      - ./deploy/mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+      retries: 5
+      timeout: 3s
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: tb_pma
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+    ports:
+      - "9001:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -37,8 +37,6 @@ services:
     container_name: tb_mysql
     restart: unless-stopped
     environment:
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
       MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
@@ -47,7 +45,8 @@ services:
       - '${DOCKER_DB_PORT:-3366}:3306'
     volumes:
       - ./deploy/mysql/db_data:/var/lib/mysql
-      - ./deploy/mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./deploy/mysql/migrations/database.sql:/docker-entrypoint-initdb.d/database.sql
+      - ./deploy/mysql/migrations/database.sql:/var/www/database.sql
     healthcheck:
       test:
         - CMD
@@ -55,6 +54,8 @@ services:
         - ping
       retries: 5
       timeout: 3s
+#    command:
+#      - mysql -uroot -ptb_root_db_password1 test_blog < ./deploy/mysql/database.sql
     networks:
       - app-network
 

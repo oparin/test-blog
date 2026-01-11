@@ -45,7 +45,7 @@ class Seeder
 
     private function createCategories(): void
     {
-        for ($i = 1; $i < 20; $i++) {
+        for ($i = 1; $i < 6; $i++) {
             $this->categoryModel->create('Category - ' . $i, 'Category - ' . $i . ' Description');
         }
     }
@@ -60,7 +60,7 @@ class Seeder
                     'Post ' . $category['id'] . ' - ' . $i,
                     'Post description ' . $category['id'] . ' - ' . $i,
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vel volutpat nibh, vitae euismod lorem. Suspendisse vulputate ac lacus sed blandit. Maecenas imperdiet, magna id gravida feugiat, dui purus semper sem, id tempor ipsum purus eu odio. Aenean congue sollicitudin ipsum. Quisque felis lectus, venenatis id leo eget, rhoncus tristique erat. Curabitur gravida lectus eu dictum suscipit. Nulla nisi nibh, ornare interdum orci id, condimentum malesuada justo. Aliquam rutrum tincidunt leo in fermentum. Nam mattis odio quis blandit tincidunt. Integer enim dui, consequat a ipsum eget, commodo vehicula justo. Ut suscipit, nisl eu gravida dignissim, nisi metus convallis ex, imperdiet interdum neque orci non nibh. In hac habitasse platea dictumst. Integer volutpat ac nunc in mollis.',
-                    'https://picsum.photos/id/' . $category['id'] + $i . '/800/400',
+                    'https://picsum.photos/id/' . $category['id'] . $i . '/800/400',
                     random_int(1, 10)
                 );
 

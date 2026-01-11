@@ -16,8 +16,8 @@ services:
     tty: true
     working_dir: /var/www/app
     volumes:
-      - ./public:/var/www/html
       - ./app:/var/www/app
+      - ./public:/var/www/html
     depends_on:
       db:
         condition: service_healthy
@@ -31,8 +31,8 @@ services:
     ports:
       - "9000:80"
     volumes:
-      - .:/var/www/app
       - ./deploy/nginx:/etc/nginx/conf.d/
+      - ./public:/var/www/html
     depends_on:
       - app
     networks:

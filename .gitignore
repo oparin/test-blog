@@ -2,3 +2,4 @@
 .env
 deploy/mysql/db_data
 app/Views/compiled
+app/Views/cache

@@ -16,7 +16,7 @@ class Category
     public function create($name, $description): int
     {
         $this->db
-            ->prepare('INSERT INTO categories (name, description) VALUES (:name, :description)')
+            ->prepare("INSERT INTO categories (name, description) VALUES (:name, :description)")
             ->execute([
                 'name'        => $name,
                 'description' => $description,
@@ -28,7 +28,7 @@ class Category
     public function getAll(): array
     {
         return $this->db
-            ->query('SELECT * FROM categories')
+            ->query("SELECT * FROM categories")
             ->fetchAll();
     }
 
@@ -66,5 +66,52 @@ class Category
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function getById($id)
+    {
+        $query = "SELECT * FROM categories WHERE id = :id";
+        $stmt  = $this->db->prepare($query);
+        $stmt->execute(['id' => $id]);
+
+        return $stmt->fetch();
+    }
+
+    public function getPostsByCategory($categoryId, $page = 1, $perPage = 10, $orderBy = 'created_at'): array
+    {
+        $validOrders = ['created_at', 'views'];
+        $orderBy     = in_array($orderBy, $validOrders) ? $orderBy : 'created_at';
+
+        $offset = ($page - 1) * $perPage;
+
+        $query = "SELECT COUNT(*) as total FROM posts p
+                  JOIN posts_categories pc ON p.id = pc.post_id
+                  WHERE pc.category_id = :category_id";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute(['category_id' => $categoryId]);
+        $total      = $stmt->fetch()['total'];
+        $totalPages = ceil($total / $perPage);
+
+        $query = "SELECT p.* FROM posts p
+                  JOIN posts_categories pc ON p.id = pc.post_id
+                  WHERE pc.category_id = :category_id
+                  ORDER BY p.{$orderBy} DESC
+                  LIMIT :offset, :per_page";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $perPage, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $posts = $stmt->fetchAll();
+
+        return [
+            'posts'        => $posts,
+            'total_pages'  => $totalPages,
+            'current_page' => $page,
+            'total'        => $total
+        ];
     }
 }

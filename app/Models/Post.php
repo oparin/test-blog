@@ -16,7 +16,7 @@ class Post
     public function create($title, $description, $content, $image, $views = 0): int
     {
         $this->db
-            ->prepare('INSERT INTO posts (title, description, content, image, views) VALUES (:title, :description, :content, :image, :views)')
+            ->prepare("INSERT INTO posts (title, description, content, image, views) VALUES (:title, :description, :content, :image, :views)")
             ->execute([
                 'title'       => $title,
                 'description' => $description,
@@ -31,7 +31,7 @@ class Post
     public function assignCategories($postId, $categoryIds): void
     {
         $this->db
-            ->prepare('DELETE FROM posts_categories WHERE post_id = :post_id')
+            ->prepare("DELETE FROM posts_categories WHERE post_id = :post_id")
             ->execute(['post_id' => $postId]);
 
         if (empty($categoryIds)) {
@@ -39,7 +39,7 @@ class Post
         }
 
         $stmt = $this->db->prepare(
-            'INSERT INTO posts_categories (post_id, category_id) VALUES (:post_id, :category_id)'
+            "INSERT INTO posts_categories (post_id, category_id) VALUES (:post_id, :category_id)"
         );
 
         foreach ($categoryIds as $categoryId) {

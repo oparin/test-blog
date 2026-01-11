@@ -6,6 +6,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Smarty\Smarty;
 use App\Controllers\HomeController;
 use App\Controllers\CategoryController;
+use App\Controllers\PostController;
 
 $smarty = new Smarty();
 $smarty->setTemplateDir(__DIR__ . '/../app/views/templates');
@@ -31,4 +32,14 @@ if ($url === '/' || $url === '') {
 
     $controller = new CategoryController($smarty);
     $controller->show($categoryId, $page, $orderBy);
+} elseif (preg_match('#^/post/(\d+)$#', $url, $matches)) {
+    $postId = $matches[1];
+
+    $controller = new PostController($smarty);
+    $controller->show($postId);
+} else {
+    // 404
+    header("HTTP/1.0 404 Not Found");
+    $smarty->assign('page_title', 'Страница не найдена');
+    $smarty->display('404.tpl');
 }

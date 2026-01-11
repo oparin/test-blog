@@ -49,4 +49,57 @@ class Post
             ]);
         }
     }
+
+    private function incrementViews($id): void
+    {
+        $query = "UPDATE posts SET views = views + 1 WHERE id = :id";
+        $this->db
+            ->prepare($query)
+            ->execute(['id' => $id]);
+    }
+
+    public function getPostCategories($postId): array
+    {
+        $query = "SELECT c.* FROM categories c
+                  JOIN posts_categories pc ON c.id = pc.category_id
+                  WHERE pc.post_id = :post_id";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute(['post_id' => $postId]);
+
+        return $stmt->fetchAll();
+    }
+
+    public function getById($id)
+    {
+        $this->incrementViews($id);
+
+        $query = "SELECT * FROM posts WHERE id = :id";
+        $stmt  = $this->db->prepare($query);
+        $stmt->execute(['id' => $id]);
+        $post = $stmt->fetch();
+
+        if ($post) {
+            $post['categories'] = $this->getPostCategories($id);
+        }
+
+        return $post;
+    }
+
+    public function getSimilarPosts($postId, $categoryIds, $limit = 3): array
+    {
+        if (empty($categoryIds)) {
+            return [];
+        }
+
+        $ids = implode(',', array_map('intval', $categoryIds));
+
+        $sql = "SELECT DISTINCT p.* FROM posts p
+                JOIN posts_categories pc ON pc.post_id = p.id
+                WHERE pc.category_id IN ($ids) AND p.id <> $postId
+                ORDER BY p.created_at DESC
+                LIMIT $limit";
+
+        return $this->db->query($sql)->fetchAll();
+    }
 }

@@ -26,7 +26,7 @@ class CategoryController
             exit;
         }
 
-        $result = $this->categoryModel->getPostsByCategory($categoryId, $page, 10, $orderBy);
+        $result = $this->categoryModel->getPostsByCategory($categoryId, $page, 3, $orderBy);
 
         $this->smarty->assign('category', $category);
         $this->smarty->assign('posts', $result['posts']);

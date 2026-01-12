@@ -13,8 +13,8 @@ class Database
     private function __construct()
     {
         $dsn = "mysql:host=" . getenv('DB_HOST') .
-            ";dbname=" . getenv('DB_NAME') .
-            ";charset=" . getenv('DB_CHARSET');
+               ";dbname=" . getenv('DB_NAME') .
+               ";charset=" . getenv('DB_CHARSET');
 
         try {
             $this->connection = new PDO(

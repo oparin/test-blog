@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Category;
 use Smarty\Smarty;
+use App\Exceptions\NotFoundException;
 
 class CategoryController
 {
@@ -16,14 +17,15 @@ class CategoryController
         $this->smarty        = $smarty;
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function show($categoryId, $page = 1, $orderBy = 'created_at'): void
     {
         $category = $this->categoryModel->getById($categoryId);
 
         if (!$category) {
-            header("HTTP/1.0 404 Not Found");
-            echo "Category not found";
-            exit;
+            throw new NotFoundException('Category not found');
         }
 
         $result = $this->categoryModel->getPostsByCategory($categoryId, $page, 3, $orderBy);

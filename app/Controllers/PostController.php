@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\Post;
 use App\Models\Category;
 use Smarty\Smarty;
+use App\Exceptions\NotFoundException;
 
 class PostController
 {
@@ -19,18 +20,19 @@ class PostController
         $this->smarty        = $smarty;
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function show($postId): void
     {
         $post = $this->postModel->getById($postId);
 
         if (!$post) {
-            header("HTTP/1.0 404 Not Found");
-            echo "Post not found";
-            exit;
+            throw new NotFoundException('Post not found');
         }
 
         $categoryIds  = array_column($post['categories'], 'id');
-        $similarPosts = $this->postModel->getSimilarPosts($postId, $categoryIds, 3);
+        $similarPosts = $this->postModel->getSimilarPosts($postId, $categoryIds);
 
         $this->smarty->assign('post', $post);
         $this->smarty->assign('similar_posts', $similarPosts);

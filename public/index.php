@@ -23,8 +23,8 @@ $query = parse_url($request, PHP_URL_QUERY) ?? '';
 parse_str($query, $params);
 
 
-//try {
-// Routes
+try {
+    // Routes
     if ($url === '/' || $url === '') {
         $controller = new HomeController($smarty);
         $controller->index();
@@ -43,13 +43,13 @@ parse_str($query, $params);
     } else {
         throw new NotFoundException('Page not found');
     }
-//} catch (NotFoundException $e) {
-//    http_response_code(404);
-//    $message = $e->getMessage();
-//    require_once __DIR__ . '/../app/Views/errors/404.tpl';
-//
-//} catch (Throwable $e) {
-//    http_response_code(500);
-//    $message = $e->getMessage();
-//    require_once __DIR__ . '/../app/Views/errors/500.tpl';
-//}
+} catch (NotFoundException $e) {
+    http_response_code(404);
+    $message = $e->getMessage();
+    require_once __DIR__ . '/../app/Views/errors/404.tpl';
+
+} catch (Throwable $e) {
+    http_response_code(500);
+    $message = $e->getMessage();
+    require_once __DIR__ . '/../app/Views/errors/500.tpl';
+}

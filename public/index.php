@@ -51,5 +51,5 @@ try {
 } catch (Throwable $e) {
     http_response_code(500);
     $message = $e->getMessage();
-    require_once __DIR__ . '/../App/Views/errors/500.tpl';
+    require_once __DIR__ . '/../app/Views/errors/500.tpl';
 }

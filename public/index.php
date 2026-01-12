@@ -10,9 +10,9 @@ use App\Controllers\PostController;
 use App\Exceptions\NotFoundException;
 
 $smarty = new Smarty();
-$smarty->setTemplateDir(__DIR__ . '/../app/views/templates');
-$smarty->setCompileDir(__DIR__ . '/../app/views/compiled');
-$smarty->setCacheDir(__DIR__ . '/../app/views/cache');
+$smarty->setTemplateDir(__DIR__ . '/../app/Views/templates');
+$smarty->setCompileDir(__DIR__ . '/../app/Views/compiled');
+$smarty->setCacheDir(__DIR__ . '/../app/Views/cache');
 $smarty->caching = false;
 
 $request = $_SERVER['REQUEST_URI'];

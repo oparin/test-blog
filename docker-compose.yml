@@ -1,4 +1,4 @@
-name: test-blog
+name: test_blog
 services:
   app:
     build:
